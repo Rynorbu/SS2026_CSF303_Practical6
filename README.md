@@ -34,28 +34,12 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 
 ### Reflection on Trie Implementation
 
-#### Strengths:
-1. **Efficiency**: Excellent for prefix-based searches and autocomplete suggestions
-2. **Memory Effective for Large Datasets**: Shares common prefixes, reducing redundant storage
-3. **Predictable Performance**: All operations have linear complexity with respect to word length
-4. **Simple Structure**: Straightforward logic makes it easy to understand and maintain
-5. **Practical Applications**: Used in production systems for spell-checkers, IP routers, and search engines
+Gaining insight into how tree-based string data structures function through the implementation of basic Tries (prefix trees) was also made possible with the implementation of Tries using the TrieNode Class which stores child characters in a dictionary at each node along with an is_end_of_word boolean variable indicating whether or not that node is the end of a complete word.
 
-#### Design Decisions:
-- **Recursive Deletion**: The recursive approach elegantly handles node cleanup, ensuring only necessary nodes remain
-- **Boolean Flag**: `is_end_of_word` distinguishes complete words from prefixes (e.g., "car" vs "carpet")
-- **Dictionary-based Children**: Provides O(1) lookup for characters compared to fixed arrays
+I found the insertion and searching processes relatively easy to implement. To insert a word, I would loop through each character found within the word to determine whether or not there was already an existing node for that character and create a new node if one was not found. If a path for that character already existed, I’d simply move onto the corresponding child node until I reached the last character. The searching process for a word was conducted similarly, but I looped through each character found within the word to determine whether or not the character/path exists until I reach either a match or confirm that a match was not found.
 
-#### Challenges Addressed:
-- **Overlapping Words**: Correctly handles cases where one word is a prefix of another (e.g., "app" and "apple")
-- **Incomplete Word Search**: Distinguishes between stored words and partial paths in the tree
-- **Memory Cleanup**: Deletion removes unused nodes, preventing memory bloat
+The deletion process requires recursion, starting at the last character of the word to delete the end-of-word marker. When a node is checked to be removed, nodes can safely be removed during the return back up the tree, unless they are used as part of another word or have children of their own.
 
-#### Real-world Applications:
-- **Autocomplete Systems**: Efficiently suggests words as users type
-- **Spell Checking**: Quickly identifies if a word exists in dictionary
-- **IP Routing**: Longest prefix matching in network routing tables
-- **Browser History**: Fast prefix-based search of visited URLs
 
 ### Trie Implementation Screenshot:
 ![Trie Implementation](assets/trie.png)
