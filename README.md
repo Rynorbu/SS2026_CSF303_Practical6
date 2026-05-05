@@ -57,6 +57,9 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 - **IP Routing**: Longest prefix matching in network routing tables
 - **Browser History**: Fast prefix-based search of visited URLs
 
+### Trie Implementation Screenshot:
+![Trie Implementation](assets/trie.png)
+
 ---
 
 ## 2. PATRICIA Trie (Radix Tree) Implementation
@@ -103,6 +106,9 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 - **Database Indexing**: B-trees often use radix tree principles for internal node compression
 - **Router Tables**: BGP routing uses similar compression for IPv6 address prefixes
 - **Memory-Constrained Systems**: Embedded systems requiring dictionary storage with minimal RAM
+
+### PATRICIA Trie Implementation Screenshot:
+![PATRICIA Trie Implementation](assets/patricia.png)
 
 #### Comparison with Standard Trie:
 
@@ -198,6 +204,9 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 - **Pattern Recognition**: Used in plagiarism detection algorithms
 - **Text Processing**: Feature extraction for machine learning
 
+### Manacher's Algorithm Implementation Screenshot:
+![Manacher's Algorithm Implementation](assets/manacher.png)
+
 ---
 
 ## Implementation Summary
@@ -207,43 +216,6 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 2. **patricia_trie.py** - Space-optimized Radix Tree implementation
 3. **manacher.py** - Linear-time longest palindrome substring finder
 4. **README.md** - This comprehensive report
-
-### Test Results:
-
-**Trie Operations:**
-```
-Inserted: apple
-Inserted: app
-Search 'apple': True
-Search 'app': True
-Search 'appl': False
-Deleted: app
-Search 'app' after deletion: False
-Search 'apple' after 'app' deletion: True
-```
-
-**PATRICIA Trie Operations:**
-```
-Inserted: romane
-Inserted: romanus
-Inserted: romulus
-Search 'romane': True
-Search 'romanus': True
-Search 'rom': False
-Deleted (logical): romane
-Search 'romane' after deletion: False
-```
-
-**Manacher's Algorithm Results:**
-```
-Original: babad → Longest Palindrome: aba
-Original: cbbd → Longest Palindrome: bb
-Original: a → Longest Palindrome: a
-Original: racecar → Longest Palindrome: racecar
-Original: abacabacabb → Longest Palindrome: abacabacaba
-```
-
----
 
 ## Comparative Analysis
 
