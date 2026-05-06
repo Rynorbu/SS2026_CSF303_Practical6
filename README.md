@@ -33,12 +33,19 @@ A **Trie** is a tree-based data structure that stores strings in a way that allo
 
 
 ### Reflection on Trie Implementation
+#### Implementation Details & Mechanics
 
-Gaining insight into how tree-based string data structures function through the implementation of basic Tries (prefix trees) was also made possible with the implementation of Tries using the TrieNode Class which stores child characters in a dictionary at each node along with an is_end_of_word boolean variable indicating whether or not that node is the end of a complete word.
+Implementing the basic Trie (Prefix Tree) helped me understand how tree-based string data structures work. The Trie is built using a TrieNode class, where each node stores child characters in a dictionary and a boolean variable called is_end_of_word to indicate whether a complete word ends at that node.
 
 I found the insertion and searching processes relatively easy to implement. To insert a word, I would loop through each character found within the word to determine whether or not there was already an existing node for that character and create a new node if one was not found. If a path for that character already existed, I’d simply move onto the corresponding child node until I reached the last character. The searching process for a word was conducted similarly, but I looped through each character found within the word to determine whether or not the character/path exists until I reach either a match or confirm that a match was not found.
 
 The deletion process requires recursion, starting at the last character of the word to delete the end-of-word marker. When a node is checked to be removed, nodes can safely be removed during the return back up the tree, unless they are used as part of another word or have children of their own.
+
+#### What I Learned
+
+By doing this practical I learned the classic Space-Time Complexity trade-off when implementing this algorithm. The time-Complexity for Searching and Inserting are extremely fast with strictly O(M) time Complexity where M is the size of the String and no relation to the size of the Tree in terms of the number of words stored in the Tree. The most surprising to me was the lack of space efficiency (a very obvious one). For every character in a word that does not share a prefix with other words, there is a separate node object created in memory for it.  I inserted a 20-character word and created 20 implementation instances (separate nodes) for it.  
+
+Additionally, in going through the process of managing edge cases in the deletion process, I learned a lot. When using naive delete methods, the naive delete would only delete the end node of the deleted word while leaving the "garbage" nodes in the Tree. If I used the method to completely delete a whole path from the Tree, I may have inadvertently removed a shorter word which shares a path in that longer then (for example: deleting "app" may cause a break in the path to "apple"). The bottom-up recursive clean-up was a very rewarding logic puzzle that greatly helped me to understand How to Traverse the Graph and how to manage the Memory that is associated with Traversing the Graph.
 
 
 ### Trie Implementation Screenshot:
@@ -67,29 +74,19 @@ The deletion process requires recursion, starting at the last character of the w
 **Space Complexity:** O(N) where N is total number of characters (significant improvement over standard Trie)
 
 ### Reflection on PATRICIA Trie Implementation
+#### Implementation Details & Mechanics
 
-#### Strengths:
-1. **Space Efficiency**: Dramatically reduces memory usage compared to standard Trie (typically 50-70% reduction)
-2. **Better Cache Performance**: Fewer nodes mean better CPU cache utilization
-3. **Scalability**: Excellent for applications with millions of entries and limited memory
-4. **Academic Significance**: Demonstrates advanced tree balancing and compression concepts
-5. **Suitable for Sparse Data**: When the alphabet is large or data distribution is sparse
+Moving from a basic Trie implementation to a PATRICIA algorithm was much more complex and helped me understand advanced data structure and how they work. One of the major differences between the two implementations is that the RadixNode stores substrings rather than just individual characters per node. What I found most difficult to code and implement was the insertion logic. When inserting a word into the tree, the algorithm needs to check each outgoing edge from the current node to determine the Longest Common Prefix (LCP) with the incoming word. 
 
-#### Design Decisions:
-- **Prefix Storage**: Edge labels compress multiple characters, reducing pointer overhead
-- **LCP Calculation**: Longest Common Prefix matching determines split points optimally
-- **Node Splitting Logic**: Carefully implemented to maintain tree integrity during insertions
+If there is a complete match between an incoming word and one of the outgoing edges for a node, we just follow the edge to its corresponding child node. But if there is only a partial match between an incoming word and the outgoing edge (e.g., if a node has the word 'romane' and I add 'romanus'), then the algorithm creates/uses an intermediate node for the LCP of the incoming and outgoing word (in this case, 'roman'), and then two child nodes ('e' and 'us') that branch from the intermediate node.
 
-#### Improvement Opportunities:
-- **Physical Deletion with Merging**: Full implementation should merge nodes after deletion
-- **Optimized Comparison**: String comparison optimization using early termination
-- **Memory Pool Allocation**: Pre-allocate node pools for faster allocation
+#### What I Learned
 
-#### Real-world Applications:
-- **DNS Servers**: Efficient IP-to-hostname mapping with compressed storage
-- **Database Indexing**: B-trees often use radix tree principles for internal node compression
-- **Router Tables**: BGP routing uses similar compression for IPv6 address prefixes
-- **Memory-Constrained Systems**: Embedded systems requiring dictionary storage with minimal RAM
+Implementing the PATRICIA Trie helped me understand why basic Tries are not commonly used in real-world systems like databases or network routers. A PATRICIA Trie improves efficiency by combining nodes that only have one child, which reduces memory usage and makes searching faster by lowering the number of pointer lookups.
+
+Although this makes the structure more efficient, it also makes the implementation more complicated. I learned that handling strings and tracking indexes must be done very carefully, as small mistakes can easily cause bugs. When splitting a node, I had to update the parent node so it points to a new intermediate node, then connect both the old remaining substring and the new substring as child nodes.
+
+This process also made me think carefully about managing the node’s state. For example, I had to decide what happens to the is_end flag after splitting a node and which node should keep the existing child nodes. I also learned that deletion in a Radix Tree is similar to reversing the split process. If deleting a word leaves a parent with only one child, those nodes should be merged back together to keep the tree compressed. Overall, implementing the PATRICIA Trie gave me a better understanding of how low-level systems and databases optimize text searching and storage.
 
 ### PATRICIA Trie Implementation Screenshot:
 ![PATRICIA Trie Implementation](assets/patricia.png)
@@ -137,103 +134,40 @@ The deletion process requires recursion, starting at the last character of the w
 ```
 
 ### Reflection on Manacher's Algorithm Implementation
+#### Implementation Details & Mechanics
 
-#### Strengths:
-1. **Optimal Time Complexity**: Achieves O(n) which is provably optimal for this problem
-2. **Elegant Optimization**: Uses symmetry properties to dramatically reduce comparisons
-3. **Handles All Cases**: Uniformly handles odd and even length palindromes
-4. **Production-Ready**: Used in real commercial systems for string processing
-5. **Memory Efficient**: Only O(n) additional space required
+Manacher’s algorithm is used to find the longest palindromic substring in linear time, or O(N), which makes it much faster than many traditional approaches. Implementing this algorithm helped me understand how dynamic programming and string manipulation can be combined to improve efficiency.
 
-#### Algorithm Brilliance:
-- **Symmetry Exploitation**: The key insight that palindromes have mirror symmetry allows reusing computations
-- **Preprocessing Trick**: Adding separators (#) eliminates special-case handling for even/odd palindromes
-- **Linear Guarantee**: No nested loops; each character examined at most twice
-- **Minimal State**: Only two variables (C, R) needed to track the search frontier
+The first step of the algorithm is preprocessing the string. Special characters, such as #, are inserted between every letter, and unique symbols like ^ and $ are added at the beginning and end of the string. This converts all palindromes into a uniform odd-length format, which removes the need to handle even-length and odd-length palindromes separately.
 
-#### Design Decisions:
-- **Preprocessing with Sentinels**: Start and end markers (^, $) prevent boundary checking
-- **Separator Insertion**: Unified approach to odd/odd and even-length palindromes
-- **P Array Initialization**: Smart use of mirror index reduces starting expansion point
+The main logic uses an array called P to store the radius of the palindrome at each position in the processed string. Two variables, C and R, are also maintained, where C represents the center of the palindrome currently extending the farthest, and R represents its right boundary.
 
-#### Test Case Analysis:
-```
-"babad"     → "aba" or "bab" (length 3)
-"cbbd"      → "bb" (length 2)
-"racecar"   → "racecar" (length 7, entire string)
-"abacabacabb" → "abacabacaba" (length 11)
-```
+To improve efficiency, the algorithm uses the mirror position of the current index relative to the center (2 * C - i). By checking this mirror value, the algorithm can reuse previously calculated palindrome lengths instead of repeatedly comparing characters from scratch. This avoids unnecessary work and allows the algorithm to run in linear time.
 
-#### Why This Algorithm Matters:
+#### What I Learned
 
-1. **Theoretical Importance**: Demonstrates algorithmic optimization through mathematical insight
-2. **Performance Critical**: For large text analysis, 50x+ speedup over naive approaches
-3. **Competitive Programming**: Essential algorithm for string-based challenges
-4. **Real-world Use**: DNA sequence analysis, plagiarism detection, data compression
-5. **Educational Value**: Shows how deep problem analysis can lead to elegant solutions
+Implementing Manacher’s algorithm was one of the most interesting learning experiences for me. Before learning this algorithm, I usually thought of solving palindrome problems using either the brute-force approach with O(N³) complexity or the expand-around-center method with O(N²) complexity. Manacher’s algorithm showed me a much smarter way to solve the same problem in linear time.
 
-#### Complexity Comparison:
+One important lesson I learned was the idea of state retention. By keeping track of the farthest right position already checked (R) and the center of that palindrome (C), the algorithm avoids rechecking the same characters again and again. This makes the solution much more efficient.
 
-| Approach | Time | Space | Notes |
-|----------|------|-------|-------|
-| **Brute Force** | O(n³) | O(1) | Check every substring |
-| **Expand Around Center** | O(n²) | O(1) | Better but still quadratic |
-| **Dynamic Programming** | O(n²) | O(n²) | Avoid redundant checks |
-| **Manacher's Algorithm** | O(n) | O(n) | **Optimal** |
+The most difficult part for me to understand was the formula P[i] = min(R - i, P[i_mirror]). At first, it was confusing, but later I understood that if the current position is inside a palindrome that has already been found, then its palindrome length can often be copied from its mirror position on the opposite side of the center. The only exception is when this copied value goes beyond the known right boundary R.
 
-#### Real-world Applications:
-- **DNA Sequence Analysis**: Find palindromic sequences in genetic data
-- **Data Compression**: Identify repetitive patterns
-- **Spell Checking**: Detect common misspellings from palindromic patterns
-- **Pattern Recognition**: Used in plagiarism detection algorithms
-- **Text Processing**: Feature extraction for machine learning
+This helped me understand the importance of symmetry and reusing previously calculated results. Overall, the algorithm taught me that highly optimized solutions are not just about making code faster, but also about finding smarter ways to avoid repeating the same work.
 
 ### Manacher's Algorithm Implementation Screenshot:
 ![Manacher's Algorithm Implementation](assets/manacher.png)
 
 ---
 
-## Implementation Summary
-
-### Files Included:
-1. **Trie.py** - Basic Trie with insert, search, delete operations
-2. **patricia_trie.py** - Space-optimized Radix Tree implementation
-3. **manacher.py** - Linear-time longest palindrome substring finder
-4. **README.md** - This comprehensive report
-
-## Comparative Analysis
-
-### When to Use Each Algorithm:
-
-**Use Trie When:**
-- Implementing autocomplete or prefix-based search
-- Building spell-checker dictionaries
-- Need clear, maintainable code over space optimization
-- Dataset size is moderate and memory is not critical
-
-**Use PATRICIA Trie When:**
-- Memory is limited or expensive (embedded systems, large datasets)
-- Implementing production systems with millions of entries
-- Working with sparse data distributions
-- Building routers or network systems
-
-**Use Manacher's Algorithm When:**
-- Need to find longest palindrome efficiently
-- Processing large texts or streams
-- Performance is critical
-- Dealing with DNA sequence analysis or pattern recognition
-
----
-
 ## Conclusion
 
-These three algorithms represent fundamental concepts in computer science:
+These three algorithms represent fundamental concepts are:
 
-1. **Trie** teaches data structure design with space-time tradeoffs
-2. **PATRICIA Trie** demonstrates optimization techniques and space compression
-3. **Manacher's Algorithm** showcases algorithmic innovation through mathematical insight
+1. **Trie** introduced me to tree-based data structures and showed how memory usage and search speed can be balanced depending on the design.
+2. **PATRICIA Trie** taught me how data structures can be optimized by reducing unnecessary nodes and compressing data to save memory.
+3. **Manacher’s Algorithm** showed me how mathematical ideas and smart logic can be used to solve problems much faster than basic approaches
 
-Together, they provide a robust foundation for tackling advanced string processing and data retrieval problems. Understanding their strengths, limitations, and appropriate use cases is essential for developing efficient software systems.
+These three algorithims serve as a basis for many advanced string processing and data retrieval problems. Knowing each of their positive and negative aspects, or strengths & weaknesses, as well as what types of problems these algorithims are best suited to solve, is important for building effective software systems.
 
 ---
 
