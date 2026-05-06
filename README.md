@@ -48,8 +48,11 @@ By doing this practical I learned the classic Space-Time Complexity trade-off wh
 Additionally, in going through the process of managing edge cases in the deletion process, I learned a lot. When using naive delete methods, the naive delete would only delete the end node of the deleted word while leaving the "garbage" nodes in the Tree. If I used the method to completely delete a whole path from the Tree, I may have inadvertently removed a shorter word which shares a path in that longer then (for example: deleting "app" may cause a break in the path to "apple"). The bottom-up recursive clean-up was a very rewarding logic puzzle that greatly helped me to understand How to Traverse the Graph and how to manage the Memory that is associated with Traversing the Graph.
 
 
-### Trie Implementation Screenshot:
+### Trie Implementation - Execution Results:
 ![Trie Implementation](assets/trie.png)
+
+### Trie Data Structure Diagram (After Insertions):
+![Trie Diagram](assets/trie_diagram.png)
 
 ---
 
@@ -88,18 +91,11 @@ Although this makes the structure more efficient, it also makes the implementati
 
 This process also made me think carefully about managing the node’s state. For example, I had to decide what happens to the is_end flag after splitting a node and which node should keep the existing child nodes. I also learned that deletion in a Radix Tree is similar to reversing the split process. If deleting a word leaves a parent with only one child, those nodes should be merged back together to keep the tree compressed. Overall, implementing the PATRICIA Trie gave me a better understanding of how low-level systems and databases optimize text searching and storage.
 
-### PATRICIA Trie Implementation Screenshot:
+### PATRICIA Trie Implementation - Execution Results:
 ![PATRICIA Trie Implementation](assets/patricia.png)
 
-#### Comparison with Standard Trie:
-
-| Aspect | Standard Trie | PATRICIA Trie |
-|--------|---------------|---------------|
-| **Memory Usage** | High (many single-char nodes) | Low (compressed edges) |
-| **Search Time** | O(m) | O(m) |
-| **Implementation** | Simple | Complex |
-| **Node Count** | Large | Small |
-| **Use Case** | General purpose | Space-critical apps |
+### PATRICIA Trie Data Structure Diagram (After Insertions):
+![PATRICIA Diagram](assets/patricia_diagram.png)
 
 ---
 
